@@ -16,6 +16,7 @@ logs/
 # Java 编译字节码与临时文件
 *.class
 *.jar
+!gradle/wrapper/gradle-wrapper.jar
 *.war
 *.ear
 
