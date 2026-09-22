@@ -1,0 +1,47 @@
+# Gradle 构建缓存与产物
+.gradle/
+build/
+bin/
+out/
+
+# 运行与调试目录
+run/
+run-data/
+run-client/
+run-server/
+*.log
+crash-reports/
+logs/
+
+# Java 编译字节码与临时文件
+*.class
+*.jar
+*.war
+*.ear
+
+# IDE 与编辑器配置
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.classpath
+.project
+.settings/
+.factorypath
+.eglot-java
+
+# 环境与操作系统
+.DS_Store
+Thumbs.db
+.direnv/
+
+# 数据生成器缓存
+src/generated/resources/.cache/
+
+# 临时排错日志与开发文件
+*_errors*.txt
+*.log
+scratch_*
+temp_classes/
+categories.txt

@@ -1,0 +1,37 @@
+{
+  "required": true,
+  "package": "net.firefoxsalesman.dungeonslibs.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8.4",
+  "refmap": "mixins.dungeonslibs.refmap.json",
+  "mixins": [
+    "ArmorItemAccessor",
+    "AxeItemAccessor",
+    "BeeMixin",
+    "BowItemMixin",
+    "BrainAccessor",
+    "CooldownAccessor",
+    "CrossbowItemInvoker",
+    "CrossbowItemMixin",
+    "EnchantmentHelperMixin",
+    "GeoEntityRendererMixin",
+    "ItemCooldownsAccessor",
+    "LivingEntityAccessor",
+    "MobInvoker",
+    "MobMixin",
+    "NearestAttackableTargetGoalAccessor",
+    "PiglinMixin",
+    "TargetingConditionsAccessor",
+    "TieredItemAccessor"
+  ],
+  "client": [
+    "AbstractClientPlayerMixin",
+    "ItemInHandRendererMixin",
+    "LivingRendererMixin",
+    "MinecraftMixin",
+    "SkeletonModelMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

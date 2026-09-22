@@ -1,0 +1,115 @@
+package net.firefoxsalesman.dungeonslibs.items.materials.weapon;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.Block;
+
+public class DungeonsWeaponMaterial implements Tier {
+
+	public static final Codec<Tier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			Codec.STRING.fieldOf("name")
+					.forGetter(iItemTier -> ((DungeonsWeaponMaterial) iItemTier).getName()),
+			SoundEvent.CODEC.fieldOf("equip_sound")
+					.forGetter(iItemTier -> ((DungeonsWeaponMaterial) iItemTier).getEquipSound()),
+			Codec.INT.fieldOf("durability").forGetter(Tier::getUses),
+			Codec.INT.fieldOf("enchantability").forGetter(Tier::getEnchantmentValue),
+			ResourceLocation.CODEC.fieldOf("repair_item")
+					.forGetter(iItemTier -> ((DungeonsWeaponMaterial) iItemTier)
+							.getRepairItemResourceLocation()),
+			Codec.FLOAT.fieldOf("attack_speed").forGetter(Tier::getSpeed),
+			Codec.FLOAT.fieldOf("attack_damage").forGetter(Tier::getAttackDamageBonus),
+			Codec.INT.fieldOf("level")
+					.forGetter(iItemTier -> ((DungeonsWeaponMaterial) iItemTier).getLevel()))
+			.apply(instance, DungeonsWeaponMaterial::new));
+
+	private final String name;
+	private final Holder<SoundEvent> equipSound;
+	private final int durability;
+	private final int enchantability;
+	private final ResourceLocation repairItemResourceLocation;
+	private final Ingredient repairItem;
+	private final float attackSpeed;
+	private final float attackDamageBonus;
+	private final int level;
+
+	public DungeonsWeaponMaterial(String name, Holder<SoundEvent> equipSound, int durability, int enchantability,
+			ResourceLocation repairItemResourceLocation, float attackSpeed, float attackDamageBonus,
+			int level) {
+		this.name = name;
+		this.equipSound = equipSound;
+		this.durability = durability;
+		this.enchantability = enchantability;
+		this.repairItemResourceLocation = repairItemResourceLocation;
+		Item item = BuiltInRegistries.ITEM.get(repairItemResourceLocation);
+		if (item != null && item != Items.AIR) {
+			repairItem = Ingredient.of(item);
+		} else {
+			repairItem = Ingredient.of(Items.IRON_INGOT);
+		}
+		this.attackSpeed = attackSpeed;
+		this.attackDamageBonus = attackDamageBonus;
+		this.level = level;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Holder<SoundEvent> getEquipSound() {
+		return equipSound;
+	}
+
+	@Override
+	public int getUses() {
+		return durability;
+	}
+
+	@Override
+	public int getEnchantmentValue() {
+		return enchantability;
+	}
+
+	public ResourceLocation getRepairItemResourceLocation() {
+		return repairItemResourceLocation;
+	}
+
+	@Override
+	public Ingredient getRepairIngredient() {
+		return repairItem;
+	}
+
+	@Override
+	public float getSpeed() {
+		return attackSpeed;
+	}
+
+	@Override
+	public float getAttackDamageBonus() {
+		return attackDamageBonus;
+	}
+
+	@Override
+	public TagKey<Block> getIncorrectBlocksForDrops() {
+		return switch (level) {
+			case 0 -> BlockTags.INCORRECT_FOR_WOODEN_TOOL;
+			case 1 -> BlockTags.INCORRECT_FOR_STONE_TOOL;
+			case 3 -> BlockTags.INCORRECT_FOR_DIAMOND_TOOL;
+			case 4 -> BlockTags.INCORRECT_FOR_NETHERITE_TOOL;
+			default -> BlockTags.INCORRECT_FOR_IRON_TOOL;
+		};
+	}
+
+	public int getLevel() {
+		return level;
+	}
+}

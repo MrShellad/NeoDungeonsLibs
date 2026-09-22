@@ -1,0 +1,31 @@
+{
+  "commands.souls.add.failed": "增加灵魂失败",
+  "commands.souls.set.failed": "设置灵魂失败",
+  "commands.souls.add.success": "成功增加了灵魂",
+  "commands.souls.set.success": "成功设置了灵魂",
+
+  "commands.summonelite.success": "成功召唤了精英生物",
+  "commands.summonelite.failed": "召唤精英生物失败",
+  "commands.summonelite.failed.uuid": "已存在具有相同 UUID 的生物",
+  "commands.summonelite.invalidPosition": "无效的位置！",
+
+  "artifact.dungeonslibs.base": "使用法宝会将其移至空闲的法宝饰品栏中。",
+  "artifact.dungeonslibs.duration": "持续时间：%d 秒",
+  "artifact.dungeonslibs.cooldown": "冷却时间：%d 秒",
+
+  "attribute.name.generic.dungeonslibs.summon_cap": "召唤上限",
+  "attribute.name.generic.dungeonslibs.follower_cost_limit": "随从消耗上限",
+  "attribute.name.generic.dungeonslibs.soul_gathering": "灵魂收集",
+  "attribute.name.generic.dungeonslibs.soul_cap": "最大灵魂容量",
+  "attribute.name.generic.dungeonslibs.life_steal": "生命偷取",
+  "attribute.name.generic.dungeonslibs.ranged_damage_multiplier": "远程伤害倍率",
+  "attribute.name.generic.dungeonslibs.magic_damage_multiplier": "魔法伤害倍率",
+  "attribute.name.generic.dungeonslibs.artifact_cooldown_multiplier": "法宝冷却时间倍率",
+
+  "curios.identifier.artifact": "法宝",
+  "item.modifiers.artifact": "放入法宝槽位时：",
+  "key.dungeonslibs.curiosintegration.category": "地下城装备饰品",
+  "key.dungeonslibs.curiosintegration.description_slot1": "法宝槽位 1",
+  "key.dungeonslibs.curiosintegration.description_slot2": "法宝槽位 2",
+  "key.dungeonslibs.curiosintegration.description_slot3": "法宝槽位 3"
+}

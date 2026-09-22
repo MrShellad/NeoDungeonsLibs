@@ -1,0 +1,47 @@
+package net.firefoxsalesman.dungeonslibs.items.materials.weapon;
+
+import net.firefoxsalesman.dungeonslibs.data.util.DefaultsCodecJsonDataManager;
+import net.firefoxsalesman.dungeonslibs.network.materials.WeaponMaterialSyncPacket;
+import net.firefoxsalesman.dungeonslibs.network.NetworkHandler;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Tier;
+
+import java.util.Collection;
+import java.util.Map;
+
+import static net.minecraft.world.item.Tiers.*;
+
+public class WeaponMaterials {
+
+	public static final DefaultsCodecJsonDataManager<Tier> WEAPON_MATERIALS = new DefaultsCodecJsonDataManager<>(
+			"material/weapon", DungeonsWeaponMaterial.CODEC);
+
+	public static void setupVanillaMaterials() {
+		WEAPON_MATERIALS.addDefault(ResourceLocation.parse("minecraft:wood"), WOOD);
+		WEAPON_MATERIALS.addDefault(ResourceLocation.parse("minecraft:stone"), STONE);
+		WEAPON_MATERIALS.addDefault(ResourceLocation.parse("minecraft:iron"), IRON);
+		WEAPON_MATERIALS.addDefault(ResourceLocation.parse("minecraft:diamond"), DIAMOND);
+		WEAPON_MATERIALS.addDefault(ResourceLocation.parse("minecraft:gold"), GOLD);
+		WEAPON_MATERIALS.addDefault(ResourceLocation.parse("minecraft:netherite"), NETHERITE);
+	}
+
+	public static Tier getWeaponMaterial(ResourceLocation resourceLocation) {
+		return WEAPON_MATERIALS.getData().getOrDefault(resourceLocation, IRON);
+	}
+
+	public static boolean WeaponMaterialExists(ResourceLocation boostResourceLocation) {
+		return WEAPON_MATERIALS.getData().containsKey(boostResourceLocation);
+	}
+
+	public static Collection<ResourceLocation> weaponMaterialsKeys() {
+		return WEAPON_MATERIALS.getData().keySet();
+	}
+
+	public static WeaponMaterialSyncPacket toPacket(Map<ResourceLocation, Tier> map) {
+		return new WeaponMaterialSyncPacket(map);
+	}
+
+	public static void subscribe() {
+		WEAPON_MATERIALS.subscribeAsSyncable(WeaponMaterials::toPacket);
+	}
+}

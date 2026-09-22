@@ -1,0 +1,38 @@
+{
+  "commands.souls.add.failed": "Failed to add souls",
+  "commands.souls.set.failed": "Failed to set souls",
+  "commands.souls.add.success": "Successfully added souls",
+  "commands.souls.set.success": "Successfully set souls",
+
+  "commands.summonelite.success": "Elite mob summoned successfully",
+  "commands.summonelite.failed": "Failed to summon elite mob",
+  "commands.summonelite.failed.uuid": "A mob with the same uuid already exists",
+  "commands.summonelite.invalidPosition": "Invalid position!",
+
+  "artifact.dungeonslibs.base": "Using the Artifact will move it into a free Artifact Curios Slot.",
+  "artifact.dungeonslibs.duration": "%d Seconds Duration",
+  "artifact.dungeonslibs.cooldown": "%d Seconds Cooldown",
+
+  "attribute.name.generic.dungeonslibs.summon_cap": "Summon Cap",
+  "attribute.name.generic.dungeonslibs.follower_cost_limit": "Follower Cost Limit",
+  "attribute.name.generic.dungeonslibs.soul_gathering": "Soul Gathering",
+  "attribute.name.generic.dungeonslibs.soul_cap": "Max Soul Capacity",
+  "attribute.name.generic.dungeonslibs.life_steal": "Life Steal",
+  "attribute.name.generic.dungeonslibs.ranged_damage_multiplier": "Ranged Damage Multiplier",
+  "attribute.name.generic.dungeonslibs.magic_damage_multiplier": "Magic Damage Multiplier",
+  "attribute.name.generic.dungeonslibs.artifact_cooldown_multiplier": "Artifact Cooldown Multiplier",
+  "attribute.name.generic.dungeonslibs.follower_cost_limit": "Follower Cost Limit",
+  "attribute.name.generic.dungeonslibs.soul_gathering": "Soul Gathering",
+  "attribute.name.generic.dungeonslibs.soul_cap": "Max Soul Capacity",
+  "attribute.name.generic.dungeonslibs.life_steal": "Life Steal",
+  "attribute.name.generic.dungeonslibs.ranged_damage_multiplier": "Ranged Damage Multiplier",
+  "attribute.name.generic.dungeonslibs.magic_damage_multiplier": "Magic Damage Multiplier",
+  "attribute.name.generic.dungeonslibs.artifact_cooldown_multiplier": "Artifact Cooldown Multiplier",
+
+  "curios.identifier.artifact": "Artifact",
+  "item.modifiers.artifact": "When In Artifact Slot:",
+  "key.dungeonslibs.curiosintegration.category": "Dungeons Gear Curios",
+  "key.dungeonslibs.curiosintegration.description_slot1": "Artifact Slot 1",
+  "key.dungeonslibs.curiosintegration.description_slot2": "Artifact Slot 2",
+  "key.dungeonslibs.curiosintegration.description_slot3": "Artifact Slot 3"
+}

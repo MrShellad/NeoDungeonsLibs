@@ -1,0 +1,154 @@
+package net.firefoxsalesman.dungeonslibs.capabilities.minionmaster;
+
+import net.firefoxsalesman.dungeonslibs.DungeonsLibs;
+import net.firefoxsalesman.dungeonslibs.capabilities.LibCapabilities;
+import net.firefoxsalesman.dungeonslibs.capabilities.minionmaster.goals.FollowerFollowLeaderGoal;
+import net.firefoxsalesman.dungeonslibs.capabilities.minionmaster.goals.LeaderHurtByTargetGoal;
+import net.firefoxsalesman.dungeonslibs.capabilities.minionmaster.goals.LeaderHurtTargetGoal;
+import net.firefoxsalesman.dungeonslibs.summon.SummonHelper;
+import net.firefoxsalesman.dungeonslibs.utils.AbilityHelper;
+import net.firefoxsalesman.dungeonslibs.mixin.MobInvoker;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.GoalSelector;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.entity.monster.Monster;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.UUID;
+
+import static net.firefoxsalesman.dungeonslibs.capabilities.LibCapabilities.FOLLOWER_ATTACHMENT;
+import static net.firefoxsalesman.dungeonslibs.capabilities.LibCapabilities.LEADER_ATTACHMENT;
+import static net.firefoxsalesman.dungeonslibs.utils.PetHelper.canPetAttackEntity;
+
+public class FollowerLeaderHelper {
+
+	public static Leader getLeaderCapability(Entity entity) {
+		if (entity == null) return new Leader();
+		return entity.getData(LEADER_ATTACHMENT);
+	}
+
+	public static Follower getFollowerCapability(Entity entity) {
+		if (entity == null) return new Follower();
+		return entity.getData(FOLLOWER_ATTACHMENT);
+	}
+
+	@Nullable
+	public static LivingEntity getOwnerForHorse(AbstractHorse horseEntity) {
+		try {
+			if (horseEntity.getOwnerUUID() != null) {
+				UUID ownerUniqueId = horseEntity.getOwnerUUID();
+				return ownerUniqueId == null ? null
+						: horseEntity.level().getPlayerByUUID(ownerUniqueId);
+			} else
+				return null;
+		} catch (IllegalArgumentException var2) {
+			return null;
+		}
+	}
+
+	public static boolean isFollower(Entity target) {
+		return getFollowerCapability(target).getLeader() != null;
+	}
+
+	public static boolean isFollowerOf(LivingEntity target, LivingEntity owner) {
+		Follower targetSummonableCap = getFollowerCapability(target);
+		return targetSummonableCap.getLeader() != null
+				&& targetSummonableCap.getLeader() == owner;
+	}
+
+	@Nullable
+	public static LivingEntity getLeader(LivingEntity minionMob) {
+		Follower minion = getFollowerCapability(minionMob);
+		return minion.getLeader();
+	}
+
+	public static boolean isSuitableNavigationForFollowLeader(Mob mobEntity) {
+		return mobEntity.getNavigation() instanceof GroundPathNavigation
+				|| mobEntity.getNavigation() instanceof FlyingPathNavigation;
+	}
+
+	public void makeFollowerOf(LivingEntity livingEntity, LivingEntity nearbyEntity) {
+		if (nearbyEntity instanceof Monster mobEntity) {
+			Leader leaderCapability = FollowerLeaderHelper.getLeaderCapability(livingEntity);
+			Follower minionCapability = FollowerLeaderHelper.getFollowerCapability(nearbyEntity);
+			leaderCapability.addFollower(mobEntity);
+			minionCapability.setLeader(livingEntity);
+			minionCapability.setGoalsAdded(false);
+			mobEntity.setTarget(null);
+			addFollowerGoals(mobEntity);
+		}
+	}
+
+	public void makeTemporaryFollowerOf(LivingEntity livingEntity, LivingEntity nearbyEntity, int followerDuration,
+			boolean revertsOnExpiration) {
+		if (nearbyEntity instanceof Mob mob) {
+			Leader leaderCapability = FollowerLeaderHelper.getLeaderCapability(livingEntity);
+			Follower minionCapability = FollowerLeaderHelper.getFollowerCapability(nearbyEntity);
+			leaderCapability.addFollower(mob);
+			minionCapability.setLeader(livingEntity);
+			minionCapability.setTemporary(true);
+			minionCapability.setRevertsOnExpiration(revertsOnExpiration);
+			minionCapability.setFollowerDuration(followerDuration);
+			minionCapability.setGoalsAdded(false);
+			mob.setTarget(null);
+			addFollowerGoals(mob);
+		}
+	}
+
+	public static void addFollowerGoals(Mob mobEntity) {
+		Follower minionCap = getFollowerCapability(mobEntity);
+		if (minionCap.isGoalsAdded())
+			return;
+		if (minionCap.isFollower()) {
+			if (!isSuitableNavigationForFollowLeader(mobEntity)) {
+				DungeonsLibs.LOGGER.error("Unsupported mob type for FollowerFollowLeaderGoal: {}",
+						mobEntity.getType());
+				return;
+			}
+			mobEntity.goalSelector.addGoal(2,
+					new FollowerFollowLeaderGoal(mobEntity, 1.5D, 24.0F, 3.0F, false));
+			clearGoals(mobEntity.targetSelector);
+			mobEntity.targetSelector.addGoal(1, new LeaderHurtByTargetGoal(mobEntity));
+			mobEntity.targetSelector.addGoal(2, new LeaderHurtTargetGoal(mobEntity));
+			mobEntity.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(mobEntity,
+					LivingEntity.class, 5, false, false,
+					(entityIterator) -> AbilityHelper.isDefaultEnemy(entityIterator)
+							&& canPetAttackEntity(mobEntity, entityIterator)));
+
+			if (minionCap.getLeader() != null) {
+				Leader leader = getLeaderCapability(minionCap.getLeader());
+				leader.addFollower(mobEntity);
+			}
+			SummonHelper.addSummonGoals(mobEntity);
+			minionCap.setGoalsAdded(true);
+		}
+	}
+
+	public static void removeFollower(LivingEntity entityLiving) {
+		Follower cap = getFollowerCapability(entityLiving);
+		LivingEntity leader = cap.getLeader();
+		if (leader != null) {
+			Leader leaderCapability = getLeaderCapability(leader);
+			leaderCapability.removeMinion(entityLiving);
+		}
+		cap.setLeader(null);
+		if (entityLiving instanceof Mob mobEntity) {
+			clearGoals(mobEntity.goalSelector);
+			clearGoals(mobEntity.targetSelector);
+			cap.setGoalsAdded(false);
+			((MobInvoker) entityLiving).invokeRegisterGoals();
+		}
+	}
+
+	private static void clearGoals(GoalSelector goalSelector) {
+		ArrayList<WrappedGoal> wrappedGoals = new ArrayList<>(goalSelector.getAvailableGoals());
+		wrappedGoals.forEach(prioritizedGoal -> goalSelector.removeGoal(prioritizedGoal.getGoal()));
+	}
+}
